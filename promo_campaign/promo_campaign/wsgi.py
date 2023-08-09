@@ -11,6 +11,8 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
+from mimetypes import add_type
+add_type("text/css", ".css")
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'promo_campaign.settings')
 
 application = get_wsgi_application()
