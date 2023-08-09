@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Welcome, {{ request.user.username }}</h1>
+  <h1>Здравствуйте, {{ request.user.username }}</h1>
   <!-- Добавьте ссылку на страницу профиля пользователя с возможностью редактирования -->
   <a href="{% url 'user_profile' %}">Edit Profile</a>
-  
+
   <!-- ... Остальной код вашей страницы профиля ... -->
 {% endblock %}

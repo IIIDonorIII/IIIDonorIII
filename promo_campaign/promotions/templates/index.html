@@ -1,10 +1,29 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
-    <title>Promo Campaigns</title>
+    <title>Промо компания</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <style>
+        .center {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-image: url("/static/images/123.jpg");
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Promo Campaigns</h1>
-    <!-- Add your content here -->
+    <div class="center">
+        <h1>Добро пожаловать в промо компанию</h1>
+        <h2>Для работы в компании и добалении данных о ней зарегестирируйтесь или войдите в свой аккаунт</h2>
+        <a href="/registration/">Зарегистрироваться</a>
+        <a href="/login/">Войти</a>
+    </div>
 </body>
 </html>

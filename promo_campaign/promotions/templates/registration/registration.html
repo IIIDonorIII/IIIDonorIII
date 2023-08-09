@@ -1,14 +1,31 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
-    <title>User Registration</title>
+    <title>Имя Регистрации</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <style>
+        .center {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-image: url("{% static 'images/Nature_Beach_Houses_on_the_sea_shore_016598_.jpg' %}");
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
 </head>
 <body>
-    <h1>User Registration</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register</button>
-    </form>
+    <div class="center">
+        <h1>Имя Регистрации</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Register</button>
+        </form>
+    </div>
 </body>
 </html>

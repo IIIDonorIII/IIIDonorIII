@@ -1,35 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>User Page</title>
+    <title>Главная Страница</title>
 </head>
 <body>
-    <h1>User Page</h1>
-    <h2>Campaigns:</h2>
+    <h1>Главная Страница</h1>
+    <a href="{% url 'user_profile' %}">Перейти к профилю</a>
+    <h3>Компании:</h3>
     <ul>
         {% for campaign in user_campaigns %}
-            <li>{{ campaign.name }} - {{ campaign.description }}</li>
-        {% empty %}
-            <li>No campaigns yet.</li>
-        {% endfor %}
-    </ul>
+        <li>
+            {{ campaign.name }} - {{ campaign.description }}
+            <ul>
+                {% for visit in user_visits %}
+                    {% if visit.campaign == campaign %}
+                        <li>{{ visit.house_address }}</li>
+                    {% endif %}
+                {% empty %}
+                    <li>No visits for this campaign yet.</li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% empty %}
+        <li>No campaigns yet.</li>
+    {% endfor %}
+</ul>
 
-    <h2>Add New Campaign:</h2>
+    <h2>Добавить компанию:</h2>
     <form method="post">
         {% csrf_token %}
-        {{ campaign_form.as_p }}
+        {{ campaign_form.as_table }}
         <button type="submit">Add Campaign</button>
     </form>
 
-    <h2>Add House Visit:</h2>
+    <h2>Обход по домам:</h2>
     <form method="post">
         {% csrf_token %}
-        {{ house_visit_form.as_p }}
+        {{ house_visit_form.campaign }}
+        {{ house_visit_form.date }}
+        {{ house_visit_form.house_address }}
         <button type="submit">Add House Visit</button>
     </form>
-</body>
-</html>
-    <h2>See Campaign Statistics:</h2>
+
+    <h2>Все статистики компаний:</h2>
     <a href="{% url 'campaign_statistics' %}">Campaign Statistics</a>
+    <h2>Ваш Профиль:</h2>
+    <p>Дата рождения: {{ user_profile.birth_date }}</p>
+    <p>Адрес: {{ user_profile.address }}</p>
+    <p>Пол: {{ user_profile.get_gender_display }}</p>
 </body>
 </html>

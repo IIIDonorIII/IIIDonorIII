@@ -1,21 +1,38 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
-    <title>Campaign Statistics</title>
+    <title>Стасиська Компании</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <style>
+        .center {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-image: url("{% static 'images/Nature_Beach_Houses_on_the_sea_shore_016598_.jpg' %}");
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
 </head>
 <body>
-    <h1>Campaign Statistics</h1>
-    <table>
-        <tr>
-            <th>Campaign Name</th>
-            <th>Visits Count</th>
-        </tr>
-        {% for stat in campaign_statistics %}
+    <div class="center">
+        <h1>Стасиська Компании</h1>
+        <table>
             <tr>
-                <td>{{ stat.campaign.name }}</td>
-                <td>{{ stat.visits_count }}</td>
+                <th>Имя Компании</th>
+                <th>Безымянная компани</th>
             </tr>
-        {% endfor %}
-    </table>
+            {% for stat in campaign_statistics %}
+                <tr>
+                    <td>{{ stat.campaign.name }}</td>
+                    <td>{{ stat.visits_count }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
 </body>
 </html>

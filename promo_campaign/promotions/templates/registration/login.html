@@ -1,14 +1,31 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
 <head>
-    <title>User Login</title>
+    <title>Введите логин</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <style>
+        .center {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-image: url("{% static 'images/Nature_Beach_Houses_on_the_sea_shore_016598_.jpg' %}");
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
 </head>
 <body>
-    <h1>User Login</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Login</button>
-    </form>
+    <div class="center">
+        <h1>Введите логин</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Login</button>
+        </form>
+    <div>
 </body>
 </html>

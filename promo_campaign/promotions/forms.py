@@ -21,7 +21,7 @@ class CampaignForm(forms.ModelForm):
 class HouseVisitForm(forms.ModelForm):
     class Meta:
         model = HouseVisit
-        fields = ['house_address']        
+        fields = ['campaign', 'house_address']
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
