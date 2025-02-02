@@ -1,0 +1,119 @@
+import requests
+from bs4 import BeautifulSoup
+from telegram.ext import Application, CommandHandler
+import asyncio
+import schedule
+import time
+
+# Глобальная переменная для хранения предыдущих курсов
+previous_rates = {}
+
+# Функция для получения курсов определенных валют
+def get_specific_currency_rates():
+    try:
+        # URL сайта с курсами валют (например, ЦБ РФ)
+        url = "https://www.cbr.ru/currency_base/daily/"
+        response = requests.get(url)
+        response.raise_for_status()  # Проверка статуса ответа
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Находим таблицу с курсами валют
+        table = soup.find('table', {'class': 'data'})
+        rows = table.find_all('tr')[1:]  # Пропускаем заголовок таблицы
+
+        # Список интересующих нас валют
+        target_currencies = {"USD", "EUR", "AED", "TRY"}
+
+        rates = {}
+        for row in rows:
+            columns = row.find_all('td')
+            if len(columns) >= 5:
+                currency_name = columns[1].text.strip()
+                if currency_name in target_currencies:  # Проверяем, нужна ли нам эта валюта
+                    rate_value = float(columns[4].text.replace(',', '.'))
+                    rates[currency_name] = rate_value
+
+        return rates
+
+    except Exception as e:
+        print(f"Ошибка при получении курсов валют: {e}")
+        return None
+
+# Функция для отправки сообщения в Telegram
+async def send_notification(message):
+    # Токен вашего Telegram-бота (получите его у @BotFather)
+    BOT_TOKEN = "7841914274:AAFGWId3uSo2xKTK7-riQiMEKgmKaLiDq_o"
+    # ID чата, куда будет отправлено сообщение
+    CHAT_ID = "-1979871856"
+
+    application = Application.builder().token(BOT_TOKEN).build()
+    await application.bot.send_message(chat_id=CHAT_ID, text=message)
+
+# Функция для проверки курсов валют
+def check_currency_rates():
+    global previous_rates
+    rates = get_specific_currency_rates()
+
+    if rates:
+        # Проверяем, изменились ли курсы
+        for currency, current_rate in rates.items():
+            previous_rate = previous_rates.get(currency)
+            if previous_rate is None:
+                print(f"Первичный курс {currency}: {current_rate}")
+                asyncio.run(send_notification(f"Курс {currency} установлен: {current_rate} руб."))
+            elif current_rate != previous_rate:
+                print(f"Курс {currency} изменился! Было: {previous_rate}, стало: {current_rate}")
+                asyncio.run(send_notification(f"Курс {currency} изменился! Было: {previous_rate}, стало: {current_rate} руб."))
+
+            # Обновляем предыдущие значения курсов
+            previous_rates[currency] = current_rate
+
+    else:
+        print("Не удалось получить курсы валют.")
+
+# Функция для запуска проверки курсов в фоне
+def run_scheduler():
+    schedule.every(10).minutes.do(check_currency_rates)  # Проверяем курсы каждые 10 минут
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+# Основная функция для запуска бота
+def main():
+    # Запускаем планировщик в отдельном потоке
+    from threading import Thread
+    scheduler_thread = Thread(target=run_scheduler)
+    scheduler_thread.start()
+
+    # Токен вашего Telegram-бота (получите его у @BotFather)
+    BOT_TOKEN = "7841914274:AAFGWId3uSo2xKTK7-riQiMEKgmKaLiDq_o"
+
+    # Создаем экземпляр Application
+    application = Application.builder().token(BOT_TOKEN).build()
+
+    # Добавляем обработчики команд
+    async def start(update, context):
+        await update.message.reply_text("Привет! Я бот от любимого мужа, который показывает курсы валют. Введите /rates для получения актуальных курсов, но возможно он будет автоматом отправлять его сюда, если хотите добавить новые курсы, то подумайте, возможно придется оплачивать услуги))).")
+
+    async def send_currency_rates(update, context):
+        rates = get_specific_currency_rates()
+        if rates:
+            message = "Актуальные курсы валют:\n"
+            for currency, rate in rates.items():
+                message += f"{currency}: {rate} руб.\n"
+        else:
+            message = "Не удалось получить курсы валют. Попробуйте позже."
+
+        await update.message.reply_text(message)
+
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("rates", send_currency_rates))
+
+    # Запускаем бота
+    application.run_polling()
+    print("Бот запущен...")
+
+if __name__ == "__main__":
+    main()
